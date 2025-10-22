@@ -1,4 +1,10 @@
-def curry_explicit(function, arity):
+from typing import Any, Callable, TypeVar, cast
+
+T = TypeVar("T")
+R = TypeVar("R")
+
+
+def curry_explicit(function: Callable[..., R], arity: int) -> Callable[..., Any]:
     """
     Transforms a multi-parameter function into a curried function.
 
@@ -18,22 +24,21 @@ def curry_explicit(function, arity):
     if arity == 0:
         return lambda: function()
 
-    def curried(*args):
-        if len(args) > arity:
-            raise TypeError("Function takes more arguments then given")
+    def curried(arg: Any) -> Any:
+        if arity == 1:
+            return function(arg)
 
-        if len(args) == arity:
-            return function(*args)
-
-        def next_curried(*next_args):
-            return curried(*(args + next_args))
+        def next_curried(next_arg: Any) -> Any:
+            return curry_explicit(lambda *args: function(arg, *args), arity - 1)(
+                next_arg
+            )
 
         return next_curried
 
     return curried
 
 
-def uncurry_explicit(function, arity):
+def uncurry_explicit(function: Callable[..., Any], arity: int) -> Callable[..., R]:
     """
     Transforms a curried function back into a regular multi-parameter function.
 
@@ -53,19 +58,23 @@ def uncurry_explicit(function, arity):
     if arity == 0:
         return lambda: function()
 
-    def uncurried(*args):
+    def uncurried(*args: Any) -> R:
         if len(args) != arity:
-            raise TypeError("Function takes more arguments then given")
+            raise TypeError(
+                f"Function takes exactly {arity} arguments, but {len(args)} were given"
+            )
 
-        result = function
+        result: Any = function
         for arg in args:
             result = result(arg)
-        return result
+        return cast(R, result)
 
     return uncurried
 
 
-def cache_results(max_size=None):
+def cache_results(
+    max_size: int | None = None,
+) -> Callable[[Callable[..., R]], Callable[..., R]]:
     """
     Decorator for caching function results.
 
@@ -76,11 +85,11 @@ def cache_results(max_size=None):
         Decorated function with caching support
     """
 
-    def decorator(func):
-        cache = {}
-        cache_order = []
+    def decorator(func: Callable[..., R]) -> Callable[..., R]:
+        cache: dict[tuple[tuple[Any, ...], tuple[tuple[Any, Any], ...]], R] = {}
+        cache_order: list[tuple[tuple[Any, ...], tuple[tuple[Any, Any], ...]]] = []
 
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> R:
             key = (args, tuple(sorted(kwargs.items())))
 
             if key in cache:
@@ -88,7 +97,7 @@ def cache_results(max_size=None):
                 cache_order.append(key)
                 return cache[key]
 
-            result = func(*args, **kwargs)
+            result: R = func(*args, **kwargs)
 
             cache[key] = result
             cache_order.append(key)
@@ -99,12 +108,19 @@ def cache_results(max_size=None):
 
             return result
 
-        wrapper.clear_cache = lambda: (cache.clear(), cache_order.clear())
-        wrapper.cache_info = lambda: {
-            "cache_size": len(cache),
-            "max_size": max_size,
-            "cache_keys": list(cache.keys()),
-        }
+        def clear_cache() -> None:
+            cache.clear()
+            cache_order.clear()
+
+        def get_cache_info() -> dict[str, Any]:
+            return {
+                "cache_size": len(cache),
+                "max_size": max_size,
+                "cache_keys": list(cache.keys()),
+            }
+
+        wrapper.clear_cache = clear_cache
+        wrapper.cache_info = get_cache_info
 
         return wrapper
 

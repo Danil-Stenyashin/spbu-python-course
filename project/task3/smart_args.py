@@ -1,6 +1,11 @@
 import copy
 import inspect
 from functools import wraps
+from typing import Any, Callable, TypeVar, ParamSpec, cast, overload
+
+T = TypeVar("T")
+R = TypeVar("R")
+P = ParamSpec("P")
 
 
 class Evaluated:
@@ -8,7 +13,7 @@ class Evaluated:
     Wrapper for default values
     """
 
-    def __init__(self, func):
+    def __init__(self, func: Callable[[], Any]) -> None:
         if not callable(func):
             raise TypeError("Evaluated requires a callable function")
         self.func = func
@@ -22,7 +27,9 @@ class Isolated:
     pass
 
 
-def smart_args(support_positional=False):
+def smart_args(
+    support_positional: bool = False,
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Decorator that analyzes default values and handles Evaluated/Isolated markers.
 
@@ -33,25 +40,37 @@ def smart_args(support_positional=False):
         Decorated function with smart argument handling
     """
 
-    def decorator(func):
-        sig = inspect.getfullargspec(func)
-        arg_names = sig.args
-        defaults = sig.defaults or ()
-        kwonlydefaults = sig.kwonlydefaults or {}
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
+        sig: inspect.FullArgSpec = inspect.getfullargspec(func)
+        arg_names: list[str] = sig.args
+        defaults: tuple[Any, ...] = sig.defaults or ()
+        kwonlydefaults: dict[str, Any] = sig.kwonlydefaults or {}
 
-        default_values = {}
+        default_values: dict[str, Any] = {}
+
+        evaluated_params: set[str] = set()
+        isolated_params: set[str] = set()
 
         if defaults:
-            offset = len(arg_names) - len(defaults)
+            offset: int = len(arg_names) - len(defaults)
             for i, default in enumerate(defaults):
-                param_name = arg_names[offset + i]
+                param_name: str = arg_names[offset + i]
                 default_values[param_name] = default
+                if isinstance(default, Evaluated):
+                    evaluated_params.add(param_name)
+                elif default is Isolated:
+                    isolated_params.add(param_name)
 
-        default_values.update(kwonlydefaults)
+        for param_name, default_val in kwonlydefaults.items():
+            default_values[param_name] = default_val
+            if isinstance(default_val, Evaluated):
+                evaluated_params.add(param_name)
+            elif default_val is Isolated:
+                isolated_params.add(param_name)
 
         for param_name, default_val in default_values.items():
-            is_evaluated = isinstance(default_val, Evaluated)
-            is_isolated = default_val is Isolated
+            is_evaluated: bool = isinstance(default_val, Evaluated)
+            is_isolated: bool = default_val is Isolated
 
             if is_evaluated and is_isolated:
                 raise ValueError(
@@ -66,40 +85,44 @@ def smart_args(support_positional=False):
                     )
 
         @wraps(func)
-        def wrapper(*args, **kwargs):
-            final_kwargs = {}
+        def wrapper(*args: Any, **kwargs: Any) -> R:
+            final_kwargs: dict[str, Any] = {}
 
             try:
-                bound = inspect.signature(func).bind(*args, **kwargs)
-                bound_args = bound.arguments
+                bound: inspect.BoundArguments = inspect.signature(func).bind(
+                    *args, **kwargs
+                )
+                bound_args: dict[str, Any] = bound.arguments
             except TypeError as e:
                 missing_params = [
-                    name
-                    for name in default_values
-                    if default_values[name] is Isolated
-                    and name not in kwargs
-                    and (not support_positional or name not in arg_names[: len(args)])
+                    name for name in isolated_params if name not in bound_args
                 ]
                 if missing_params:
-                    raise TypeError(f"Missing required argument")
+                    raise TypeError(
+                        f"Missing required arguments: {', '.join(missing_params)}"
+                    )
                 raise e
 
-            for param_name in default_values:
-                default_val = default_values[param_name]
+            all_param_names = (
+                set(arg_names) | set(kwonlydefaults.keys()) | set(sig.kwonlyargs)
+            )
 
+            for param_name in all_param_names:
                 if param_name in bound_args:
                     arg_value = bound_args[param_name]
-                    if default_val is Isolated:
+                    if param_name in isolated_params:
                         final_kwargs[param_name] = copy.deepcopy(arg_value)
                     else:
                         final_kwargs[param_name] = arg_value
                 else:
-                    if isinstance(default_val, Evaluated):
-                        final_kwargs[param_name] = default_val.func()
-                    elif default_val is Isolated:
-                        raise TypeError(f"Missing required argument")
+                    if param_name in evaluated_params:
+                        final_kwargs[param_name] = default_values[param_name].func()
+                    elif param_name in isolated_params:
+                        raise TypeError(f"Missing required argument: '{param_name}'")
+                    elif param_name in default_values:
+                        final_kwargs[param_name] = default_values[param_name]
                     else:
-                        final_kwargs[param_name] = default_val
+                        raise TypeError(f"Missing required argument: '{param_name}'")
 
             return func(**final_kwargs)
 

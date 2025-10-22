@@ -9,8 +9,6 @@ def test_curry_basic_functionality():
 
     curried = curry_explicit(add_three, 3)
     assert curried(1)(2)(3) == 6
-    assert curried(1, 2)(3) == 6
-    assert curried(1)(2, 3) == 6
 
 
 def test_uncurry_basic_functionality():
@@ -101,5 +99,22 @@ def test_mutable_arguments():
         return [modifier(item) * count for item in data]
 
     curried = curry_explicit(process_data, 3)
-    result = curried([1, 2, 3])(lambda x: x + 1)(2)
+    step1 = curried([1, 2, 3])
+    step2 = step1(lambda x: x + 1)
+    result = step2(2)
     assert result == [4, 6, 8]
+
+
+def test_strict_single_argument():
+    def func(a, b, c):
+        return a + b + c
+
+    curried = curry_explicit(func, 3)
+
+    assert curried(1)(2)(3) == 6
+
+    with pytest.raises(TypeError):
+        curried(1, 2)(3)
+
+    with pytest.raises(TypeError):
+        curried(1)(2, 3)
