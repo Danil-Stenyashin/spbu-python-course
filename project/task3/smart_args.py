@@ -1,11 +1,10 @@
 import copy
 import inspect
 from functools import wraps
-from typing import Any, Callable, TypeVar, ParamSpec, cast, overload
+from typing import Any, Callable, TypeVar
 
 T = TypeVar("T")
 R = TypeVar("R")
-P = ParamSpec("P")
 
 
 class Evaluated:
@@ -29,7 +28,7 @@ class Isolated:
 
 def smart_args(
     support_positional: bool = False,
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
+) -> Callable[[Callable[..., R]], Callable[..., R]]:
     """
     Decorator that analyzes default values and handles Evaluated/Isolated markers.
 
@@ -40,7 +39,7 @@ def smart_args(
         Decorated function with smart argument handling
     """
 
-    def decorator(func: Callable[P, R]) -> Callable[P, R]:
+    def decorator(func: Callable[..., R]) -> Callable[..., R]:
         sig: inspect.FullArgSpec = inspect.getfullargspec(func)
         arg_names: list[str] = sig.args
         defaults: tuple[Any, ...] = sig.defaults or ()

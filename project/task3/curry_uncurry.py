@@ -1,4 +1,4 @@
-from typing import Any, Callable, TypeVar, cast
+from typing import Any, Callable, TypeVar, cast, Union
 
 T = TypeVar("T")
 R = TypeVar("R")
@@ -73,7 +73,7 @@ def uncurry_explicit(function: Callable[..., Any], arity: int) -> Callable[..., 
 
 
 def cache_results(
-    max_size: int | None = None,
+    max_size: Union[int, None] = None
 ) -> Callable[[Callable[..., R]], Callable[..., R]]:
     """
     Decorator for caching function results.
@@ -86,8 +86,8 @@ def cache_results(
     """
 
     def decorator(func: Callable[..., R]) -> Callable[..., R]:
-        cache: dict[tuple[tuple[Any, ...], tuple[tuple[Any, Any], ...]], R] = {}
-        cache_order: list[tuple[tuple[Any, ...], tuple[tuple[Any, Any], ...]]] = []
+        cache: Dict[Tuple[Tuple[Any, ...], Tuple[Tuple[Any, Any], ...]], R] = {}
+        cache_order: List[Tuple[Tuple[Any, ...], Tuple[Tuple[Any, Any], ...]]] = []
 
         def wrapper(*args: Any, **kwargs: Any) -> R:
             key = (args, tuple(sorted(kwargs.items())))
