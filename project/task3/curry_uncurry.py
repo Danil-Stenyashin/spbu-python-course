@@ -71,7 +71,7 @@ def uncurry_explicit(function: Callable[..., Any], arity: int) -> Callable[..., 
 
 def cache_results(
     max_size: Union[int, None] = None
-) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+) -> Callable[[Callable[..., Any]], Any]:
     """
     Decorator for caching function results.
 
@@ -82,7 +82,7 @@ def cache_results(
         Decorated function with caching support
     """
 
-    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+    def decorator(func: Callable[..., Any]) -> Any:
         cache: Dict[Tuple[Tuple[Any, ...], Tuple[Tuple[Any, Any], ...]], Any] = {}
         cache_order: List[Tuple[Tuple[Any, ...], Tuple[Tuple[Any, Any], ...]]] = []
 

@@ -44,8 +44,8 @@ def smart_args(
 
         default_values: Dict[str, Any] = {}
 
-        evaluated_params: set[str] = set()
-        isolated_params: set[str] = set()
+        evaluated_params: Set[str] = set()
+        isolated_params: Set[str] = set()
 
         if defaults:
             offset: int = len(arg_names) - len(defaults)
@@ -87,7 +87,7 @@ def smart_args(
                 bound: inspect.BoundArguments = inspect.signature(func).bind(
                     *args, **kwargs
                 )
-                bound_args: dict[str, Any] = bound.arguments
+                bound_args: Dict[str, Any] = bound.arguments
             except TypeError as e:
                 missing_params = [
                     name for name in isolated_params if name not in bound_args
