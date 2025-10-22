@@ -1,4 +1,4 @@
-from typing import Any, Callable, TypeVar, cast, Dict, List, Tuple, Union
+from typing import Any, Callable, Dict, List, Tuple, Union
 
 
 def curry_explicit(function: Callable[..., Any], arity: int) -> Callable[..., Any]:
@@ -64,7 +64,7 @@ def uncurry_explicit(function: Callable[..., Any], arity: int) -> Callable[..., 
         result: Any = function
         for arg in args:
             result = result(arg)
-        return cast(Any, result)
+        return result
 
     return uncurried
 
@@ -109,7 +109,7 @@ def cache_results(
             cache.clear()
             cache_order.clear()
 
-        def get_cache_info() -> dict[str, Any]:
+        def get_cache_info() -> Dict[str, Any]:
             return {
                 "cache_size": len(cache),
                 "max_size": max_size,

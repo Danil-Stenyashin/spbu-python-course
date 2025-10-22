@@ -1,7 +1,7 @@
 import copy
 import inspect
 from functools import wraps
-from typing import Any, Callable, TypeVar, Union
+from typing import Any, Callable, Dict, List, Tuple, Set
 
 
 class Evaluated:
@@ -38,11 +38,11 @@ def smart_args(
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         sig: inspect.FullArgSpec = inspect.getfullargspec(func)
-        arg_names: list[str] = sig.args
-        defaults: tuple[Any, ...] = sig.defaults or ()
-        kwonlydefaults: dict[str, Any] = sig.kwonlydefaults or {}
+        arg_names: List[str] = sig.args
+        defaults: Tuple[Any, ...] = sig.defaults or ()
+        kwonlydefaults: Dict[str, Any] = sig.kwonlydefaults or {}
 
-        default_values: dict[str, Any] = {}
+        default_values: Dict[str, Any] = {}
 
         evaluated_params: set[str] = set()
         isolated_params: set[str] = set()
@@ -82,8 +82,7 @@ def smart_args(
 
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            final_kwargs: dict[str, Any] = {}
-
+            final_kwargs: Dict[str, Any] = {}
             try:
                 bound: inspect.BoundArguments = inspect.signature(func).bind(
                     *args, **kwargs
