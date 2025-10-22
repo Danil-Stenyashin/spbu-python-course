@@ -118,3 +118,82 @@ def test_strict_single_argument():
 
     with pytest.raises(TypeError):
         curried(1)(2, 3)
+
+
+def test_builtin_functions():
+    pow_curried = curry_explicit(lambda x, y: x**y, 2)
+    assert pow_curried(2)(3) == 8
+
+    len_curried = curry_explicit(lambda x: len(x), 1)
+    assert len_curried("hello") == 5
+
+    uncurried_pow = uncurry_explicit(pow_curried, 2)
+    assert uncurried_pow(3, 2) == 9
+
+
+def test_variable_arity_functions():
+    def sum_three(a, b, c):
+        return a + b + c
+
+    def sum_four(a, b, c, d):
+        return a + b + c + d
+
+    curried_three = curry_explicit(sum_three, 3)
+    curried_four = curry_explicit(sum_four, 4)
+
+    assert curried_three(1)(2)(3) == 6
+    assert curried_four(1)(2)(3)(4) == 10
+
+    uncurried_three = uncurry_explicit(curried_three, 3)
+    uncurried_four = uncurry_explicit(curried_four, 4)
+
+    assert uncurried_three(1, 2, 3) == 6
+    assert uncurried_four(1, 2, 3, 4) == 10
+
+
+def test_complex_currying():
+    functions = [
+        (lambda: 42, 0),
+        (lambda x: x * 2, 1),
+        (lambda x, y: x + y, 2),
+        (lambda x, y, z: x * y * z, 3),
+        (lambda a, b, c, d: a + b + c + d, 4),
+    ]
+
+    for func, arity in functions:
+        curried = curry_explicit(func, arity)
+        uncurried = uncurry_explicit(curried, arity)
+
+        if arity == 0:
+            assert curried() == func()
+        elif arity == 1:
+            assert curried(5) == func(5)
+        elif arity == 2:
+            assert curried(2)(3) == func(2, 3)
+        elif arity == 3:
+            assert curried(2)(3)(4) == func(2, 3, 4)
+        elif arity == 4:
+            assert curried(1)(2)(3)(4) == func(1, 2, 3, 4)
+
+        if arity == 0:
+            assert uncurried() == func()
+        elif arity == 1:
+            assert uncurried(5) == func(5)
+        elif arity == 2:
+            assert uncurried(2, 3) == func(2, 3)
+        elif arity == 3:
+            assert uncurried(2, 3, 4) == func(2, 3, 4)
+        elif arity == 4:
+            assert uncurried(1, 2, 3, 4) == func(1, 2, 3, 4)
+
+
+def test_curry_with_different_types():
+    concat_curried = curry_explicit(lambda a, b: a + b, 2)
+    assert concat_curried("hello")(" world") == "hello world"
+
+    list_curried = curry_explicit(lambda a, b: a + b, 2)
+    assert list_curried([1, 2])([3, 4]) == [1, 2, 3, 4]
+
+    dict_curried = curry_explicit(lambda a, b: {**a, **b}, 2)
+    result = dict_curried({"a": 1})({"b": 2})
+    assert result == {"a": 1, "b": 2}

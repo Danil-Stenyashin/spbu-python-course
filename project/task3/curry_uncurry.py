@@ -1,10 +1,7 @@
-from typing import Any, Callable, TypeVar, cast, Union
-
-T = TypeVar("T")
-R = TypeVar("R")
+from typing import Any, Callable, TypeVar, cast, Dict, List, Tuple, Union
 
 
-def curry_explicit(function: Callable[..., R], arity: int) -> Callable[..., Any]:
+def curry_explicit(function: Callable[..., Any], arity: int) -> Callable[..., Any]:
     """
     Transforms a multi-parameter function into a curried function.
 
@@ -38,7 +35,7 @@ def curry_explicit(function: Callable[..., R], arity: int) -> Callable[..., Any]
     return curried
 
 
-def uncurry_explicit(function: Callable[..., Any], arity: int) -> Callable[..., R]:
+def uncurry_explicit(function: Callable[..., Any], arity: int) -> Callable[..., Any]:
     """
     Transforms a curried function back into a regular multi-parameter function.
 
@@ -58,7 +55,7 @@ def uncurry_explicit(function: Callable[..., Any], arity: int) -> Callable[..., 
     if arity == 0:
         return lambda: function()
 
-    def uncurried(*args: Any) -> R:
+    def uncurried(*args: Any) -> Any:
         if len(args) != arity:
             raise TypeError(
                 f"Function takes exactly {arity} arguments, but {len(args)} were given"
@@ -67,14 +64,14 @@ def uncurry_explicit(function: Callable[..., Any], arity: int) -> Callable[..., 
         result: Any = function
         for arg in args:
             result = result(arg)
-        return cast(R, result)
+        return cast(Any, result)
 
     return uncurried
 
 
 def cache_results(
     max_size: Union[int, None] = None
-) -> Callable[[Callable[..., R]], Callable[..., R]]:
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """
     Decorator for caching function results.
 
@@ -85,11 +82,11 @@ def cache_results(
         Decorated function with caching support
     """
 
-    def decorator(func: Callable[..., R]) -> Callable[..., R]:
-        cache: Dict[Tuple[Tuple[Any, ...], Tuple[Tuple[Any, Any], ...]], R] = {}
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        cache: Dict[Tuple[Tuple[Any, ...], Tuple[Tuple[Any, Any], ...]], Any] = {}
         cache_order: List[Tuple[Tuple[Any, ...], Tuple[Tuple[Any, Any], ...]]] = []
 
-        def wrapper(*args: Any, **kwargs: Any) -> R:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             key = (args, tuple(sorted(kwargs.items())))
 
             if key in cache:
@@ -97,7 +94,7 @@ def cache_results(
                 cache_order.append(key)
                 return cache[key]
 
-            result: R = func(*args, **kwargs)
+            result: Any = func(*args, **kwargs)
 
             cache[key] = result
             cache_order.append(key)
@@ -119,9 +116,16 @@ def cache_results(
                 "cache_keys": list(cache.keys()),
             }
 
-        wrapper.clear_cache = clear_cache
-        wrapper.cache_info = get_cache_info
+        class CachedFunction:
+            def __call__(self, *args: Any, **kwargs: Any) -> Any:
+                return wrapper(*args, **kwargs)
 
-        return wrapper
+            def clear_cache(self) -> None:
+                clear_cache()
+
+            def cache_info(self) -> Dict[str, Any]:
+                return get_cache_info()
+
+        return CachedFunction()
 
     return decorator
