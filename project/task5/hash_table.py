@@ -1,5 +1,5 @@
 from collections.abc import MutableMapping
-from typing import Any, Iterator
+from typing import Any, Iterator, List, Tuple
 
 
 class HashTable(MutableMapping):
@@ -16,7 +16,7 @@ class HashTable(MutableMapping):
         """
         self.volume = volume
         self.size = 0
-        self.buckets = [[] for _ in range(volume)]
+        self.buckets: List[List[Tuple[Any, Any]]] = [[] for _ in range(volume)]
 
     def _hash(self, key: Any) -> int:
         """
