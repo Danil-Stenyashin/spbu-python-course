@@ -197,3 +197,65 @@ def test_curry_with_different_types():
     dict_curried = curry_explicit(lambda a, b: {**a, **b}, 2)
     result = dict_curried({"a": 1})({"b": 2})
     assert result == {"a": 1, "b": 2}
+
+
+def test_cache_simple():
+    calls = 0
+
+    @cache_results()
+    def add(x, y):
+        nonlocal calls
+        calls += 1
+        return x + y
+
+    assert add(1, 2) == 3
+    assert calls == 1
+    assert add(1, 2) == 3
+    assert calls == 1
+
+
+def test_cache_different_args():
+    calls = 0
+
+    @cache_results()
+    def func(x):
+        nonlocal calls
+        calls += 1
+        return x * 2
+
+    assert func(1) == 2
+    assert func(1) == 2
+    assert calls == 1
+
+
+def test_curry_high_arity():
+    def func(a, b, c, d, e):
+        return a + b + c + d + e
+
+    curried = curry_explicit(func, 5)
+    result = curried(1)(2)(3)(4)(5)
+    assert result == 15
+
+
+def test_uncurry_high_arity():
+    def func(a, b, c, d):
+        return a * b * c * d
+
+    curried = curry_explicit(func, 4)
+    uncurried = uncurry_explicit(curried, 4)
+    assert uncurried(2, 3, 4, 5) == 120
+
+
+def test_curry_cache_combined():
+    calls = 0
+
+    @cache_results()
+    def mul(x, y, z):
+        nonlocal calls
+        calls += 1
+        return x * y * z
+
+    assert mul(2, 3, 4) == 24
+    assert calls == 1
+    assert mul(2, 3, 4) == 24
+    assert calls == 1

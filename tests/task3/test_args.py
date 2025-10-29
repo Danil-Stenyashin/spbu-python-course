@@ -1,5 +1,6 @@
-import pytest
 import random
+
+import pytest
 
 from project.task3.smart_args import smart_args, Evaluated, Isolated
 
@@ -156,3 +157,38 @@ def test_complex_smart_args_scenarios():
     )
     assert result3["computed"] == "manual"
     assert result3["optional"] == 100
+
+
+def test_many_isolated():
+    @smart_args()
+    def func(*, a=Isolated, b=Isolated, c=Isolated):
+        a.append(1)
+        b.append(2)
+        c.append(3)
+        return a, b, c
+
+    x, y, z = [], [], []
+    result = func(a=x, b=y, c=z)
+    assert result == ([1], [2], [3])
+    assert x == [] and y == [] and z == []
+
+
+def test_many_evaluated():
+    counters = [0, 0]
+
+    def counter1():
+        counters[0] += 1
+        return counters[0]
+
+    def counter2():
+        counters[1] += 1
+        return counters[1]
+
+    @smart_args()
+    def func(*, x=Evaluated(counter1), y=Evaluated(counter2)):
+        return x + y
+
+    assert func() == 2
+    assert func() == 4
+    result = func(x=10)
+    assert result > 10
