@@ -137,7 +137,6 @@ def test_clear_method():
 
 
 def test_multiprocess_access():
-    """This might fail on Windows due to serialization issues"""
     ht = ParallelHashTable()
 
     try:
@@ -159,28 +158,29 @@ def test_multiprocess_access():
 
 
 def test_no_race_conditions():
-    """This might fail on Windows due to serialization issues"""
+    """Test that there are no race conditions in counter increments"""
     ht = ParallelHashTable()
 
-    try:
-        processes = []
-        num_processes = 2
-        increments_per_process = 10
+    processes = []
+    num_processes = 2
+    increments_per_process = 10
 
-        for _ in range(num_processes):
-            p = Process(
-                target=increment_worker, args=(ht, "counter", increments_per_process)
-            )
-            processes.append(p)
-            p.start()
+    for _ in range(num_processes):
+        p = Process(
+            target=increment_worker, args=(ht, "counter", increments_per_process)
+        )
+        processes.append(p)
+        p.start()
 
-        for p in processes:
-            p.join()
+    time.sleep(0.1)
 
-        expected_total = num_processes * increments_per_process
-        assert ht["counter"] == expected_total
-    except Exception as e:
-        pytest.skip(f"Multiprocessing test skipped(windows problem): {e}")
+    for p in processes:
+        p.join(timeout=5)
+
+    expected_total = num_processes * increments_per_process
+    assert (
+        ht["counter"] == expected_total
+    ), f"Expected {expected_total}, got {ht['counter']}"
 
 
 def ShowRecipe():
