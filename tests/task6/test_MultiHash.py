@@ -1,5 +1,5 @@
 from multiprocessing import Process
-
+import time
 import pytest
 
 from project.task6.MultiHash import ParallelHashTable
