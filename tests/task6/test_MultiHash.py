@@ -1,4 +1,3 @@
-import time
 from multiprocessing import Process
 
 import pytest
@@ -6,28 +5,19 @@ import pytest
 from project.task6.MultiHash import ParallelHashTable
 
 
-def increment_worker(ht, counter_key, increments):
-    for _ in range(increments):
-        ht.atomic_increment(counter_key, 1)
-
-
 def worker_add(ht, process_id):
     for i in range(10):
         ht[f"key_{process_id}_{i}"] = f"value_{process_id}_{i}"
 
 
+def increment_worker(ht, counter_key, increments):
+    for _ in range(increments):
+        ht.atomic_increment(counter_key, 1)
+
+
 def update_worker(ht, key, iterations):
     for i in range(iterations):
         ht[key] = i
-
-
-def increment_worker(ht, counter_key, increments):
-    for _ in range(increments):
-        try:
-            current = ht[counter_key]
-            ht[counter_key] = current + 1
-        except KeyError:
-            ht[counter_key] = 1
 
 
 def test_basic_operations():
@@ -177,8 +167,6 @@ def test_no_race_conditions():
         )
         processes.append(p)
         p.start()
-
-    time.sleep(0.1)
 
     for p in processes:
         p.join(timeout=5)
