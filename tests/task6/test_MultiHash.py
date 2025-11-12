@@ -1,8 +1,14 @@
-from multiprocessing import Process
 import time
+from multiprocessing import Process
+
 import pytest
 
 from project.task6.MultiHash import ParallelHashTable
+
+
+def increment_worker(ht, counter_key, increments):
+    for _ in range(increments):
+        ht.atomic_increment(counter_key, 1)
 
 
 def worker_add(ht, process_id):

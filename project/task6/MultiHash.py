@@ -115,3 +115,11 @@ class ParallelHashTable(MutableMapping):
         """
         with self._lock:
             self._data.clear()
+
+    def atomic_increment(self, key: Any, increment: int = 1) -> int:
+        """Atomically increment a counter value"""
+        with self._lock:
+            current = self._data.get(key, 0)
+            new_value = current + increment
+            self._data[key] = new_value
+            return new_value
