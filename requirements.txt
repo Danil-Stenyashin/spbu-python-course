@@ -5,4 +5,3 @@ pandas
 plotly
 pre-commit
 pytest
-skirit-sklearn
