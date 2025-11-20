@@ -1,4 +1,5 @@
 black
 mypy
+pandas
 pre-commit
 pytest
