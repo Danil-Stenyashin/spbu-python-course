@@ -1,7 +1,4 @@
 black
-matplotlib
 mypy
-pandas
-plotly
 pre-commit
 pytest
