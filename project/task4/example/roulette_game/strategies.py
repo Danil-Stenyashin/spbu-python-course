@@ -1,137 +1,141 @@
 from abc import ABC, abstractmethod
-from random import randint
+from random import randint, choice
 
 from project.task4.example.roulette_game.bets import Bet
-from project.task4.example.roulette_game.enums import BetType, Color
-from project.task4.example.roulette_game.players import Player
+from project.task4.example.roulette_game.enums import (
+    BetType,
+    Color,
+    EvenOdd,
+    Dozen,
+    Half,
+)
 
 
 class Strategy(ABC):
-    """Abstract base class for betting strategies
-
-    All strategy classes must implement the make_bet method
-    """
+    """Abstract base class for betting strategies"""
 
     def __init__(self):
         self._last_result: bool = True
 
     @abstractmethod
     def make_bet(self, player_balance: int, game_history: list) -> Bet:
-        """Creates a strategy logic.
-
-        Parameters:
-            player (Player): Player object containing current game state
-
-        Returns:
-            Bet: Bet object with type, value and amount
-        """
+        """Creates a bet based on player balance and game history"""
         pass
 
     def update_result(self, won: bool) -> None:
         """Update strategy with result of last bet"""
         self._last_result = won
 
-    def last_result(self) -> bool:
+    def get_last_result(self) -> bool:
         """Get result of last bet"""
         return self._last_result
 
 
 class ConservativeStrategy(Strategy):
-    """Conservative betting strategy
-
-    This strategy alternates between red and black colors and bets 10% of balance.
-
-    Attributes:
-        last_color (str): Last color bet
-    """
+    """Conservative strategy - uses safer bets with lower risk"""
 
     def __init__(self):
         super().__init__()
-        self.last_color = Color.BLACK
+        self.bet_cycle = [BetType.COLOR, BetType.EVEN_ODD, BetType.DOZEN, BetType.HALF]
+        self.cycle_index = 0
 
     def make_bet(self, player_balance: int, game_history: list) -> Bet:
-        """Makes a conservative bet
+        bet_type = self.bet_cycle[self.cycle_index]
+        self.cycle_index = (self.cycle_index + 1) % len(self.bet_cycle)
 
-        Parameters:
-            player (Player): Player object with current balance
-
-        Returns:
-            Bet: Color bet
-        """
-        color = Color.RED if self.last_color == Color.BLACK else Color.BLACK
-        self.last_color = color
         amount = max(1, int(player_balance * 0.1))
-        return Bet(BetType.COLOR, color, amount)
+
+        if bet_type == BetType.COLOR:
+            color = Color.RED if len(game_history) % 2 == 0 else Color.BLACK
+            return Bet(bet_type, color, amount)
+        elif bet_type == BetType.EVEN_ODD:
+            even_odd = EvenOdd.EVEN if len(game_history) % 2 == 0 else EvenOdd.ODD
+            return Bet(bet_type, even_odd, amount)
+        elif bet_type == BetType.DOZEN:
+            dozens = [Dozen.FIRST, Dozen.SECOND, Dozen.THIRD]
+            dozen = dozens[len(game_history) % 3]
+            return Bet(bet_type, dozen, amount)
+        elif bet_type == BetType.HALF:
+            half = Half.FIRST_18 if len(game_history) % 2 == 0 else Half.LAST_18
+            return Bet(bet_type, half, amount)
 
 
 class RiskStrategy(Strategy):
-    """Risky betting strategy
+    """Risky strategy - uses all bet types including numbers"""
 
-    This strategy selects random numbers (0-36) and bets 10% of balance.
-    """
+    def __init__(self):
+        super().__init__()
 
     def make_bet(self, player_balance: int, game_history: list) -> Bet:
-        """Makes a risky bet
+        bet_type = choice(
+            [
+                BetType.NUMBER,
+                BetType.COLOR,
+                BetType.EVEN_ODD,
+                BetType.DOZEN,
+                BetType.COLUMN,
+                BetType.HALF,
+            ]
+        )
 
-        Parameters:
-            player (Player): Player object with current balance
-
-        Returns:
-            Bet: Number bet
-        """
-        number = randint(0, 36)
         amount = max(1, int(player_balance * 0.1))
-        return Bet(BetType.NUMBER, number, amount)
+
+        if bet_type == BetType.NUMBER:
+            return Bet(bet_type, randint(0, 36), amount)
+        elif bet_type == BetType.COLOR:
+            return Bet(bet_type, choice([Color.RED, Color.BLACK]), amount)
+        elif bet_type == BetType.EVEN_ODD:
+            return Bet(bet_type, choice([EvenOdd.EVEN, EvenOdd.ODD]), amount)
+        elif bet_type == BetType.DOZEN:
+            return Bet(
+                bet_type, choice([Dozen.FIRST, Dozen.SECOND, Dozen.THIRD]), amount
+            )
+        elif bet_type == BetType.COLUMN:
+            return Bet(bet_type, randint(1, 3), amount)
+        elif bet_type == BetType.HALF:
+            return Bet(bet_type, choice([Half.FIRST_18, Half.LAST_18]), amount)
 
 
 class MegaRiskStrategy(Strategy):
-    """Very risky strategy
+    """Very risky strategy - focuses on high-risk high-reward bets"""
 
-    This strategy always bets on number zero with 50% of current balance.
-    """
+    def __init__(self):
+        super().__init__()
+        self.risk_modes = [BetType.NUMBER, BetType.COLUMN]
+        self.mode_index = 0
 
     def make_bet(self, player_balance: int, game_history: list) -> Bet:
-        """Makes a very risky bet on number zero.
+        if len(game_history) % 2 == 0:
+            self.mode_index = (self.mode_index + 1) % len(self.risk_modes)
 
-        Parameters:
-            player (Player): Player object with current balance
-
-        Returns:
-            Bet: Number bet
-        """
+        bet_type = self.risk_modes[self.mode_index]
         amount = max(1, int(player_balance * 0.5))
-        return Bet(BetType.NUMBER, 0, amount)
+
+        if bet_type == BetType.NUMBER:
+            number = choice([0, 0, 0, 1, 2, 34, 35, 36] + list(range(3, 34)))
+            return Bet(bet_type, number, amount)
+        elif bet_type == BetType.COLUMN:
+            return Bet(bet_type, randint(1, 3), amount)
 
 
 class MathematicalStrategy(Strategy):
-    """Mathematical strategy Martingale
-
-    This strategy doubles the bet after losses and resets after wins.
-    Bets on alternating colors.
-
-    Attributes:
-        last_bet_amount (int): Amount of last bet
-        last_color (str): Last color bet
-        consecutive_losses (int): Number of consecutive losses
-    """
+    """Mathematical strategy using Martingale system"""
 
     def __init__(self):
         super().__init__()
         self.last_bet_amount = 1
-        self.last_color = Color.RED
         self.consecutive_losses = 0
-        self._previous_bet_amount = 1
+        self.bet_rotation = [
+            BetType.COLOR,
+            BetType.EVEN_ODD,
+            BetType.DOZEN,
+            BetType.HALF,
+        ]
+        self.rotation_index = 0
 
     def make_bet(self, player_balance: int, game_history: list) -> Bet:
-        """Makes bet using Martingale
-
-        Parameters:
-            player (Player): Player object with current balance
-
-        Returns:
-            Bet: Color bet
-        """
-        self.last_color = Color.BLACK if self.last_color == Color.RED else Color.RED
+        bet_type = self.bet_rotation[self.rotation_index]
+        self.rotation_index = (self.rotation_index + 1) % len(self.bet_rotation)
 
         new_bet_amount = 1 * (2**self.consecutive_losses)
         new_bet_amount = min(new_bet_amount, player_balance)
@@ -139,20 +143,27 @@ class MathematicalStrategy(Strategy):
             new_bet_amount = 1
 
         self.last_bet_amount = new_bet_amount
-        return Bet(BetType.COLOR, self.last_color, new_bet_amount)
+
+        if bet_type == BetType.COLOR:
+            color = Color.RED if len(game_history) % 2 == 0 else Color.BLACK
+            return Bet(bet_type, color, new_bet_amount)
+        elif bet_type == BetType.EVEN_ODD:
+            even_odd = EvenOdd.EVEN if len(game_history) % 2 == 0 else EvenOdd.ODD
+            return Bet(bet_type, even_odd, new_bet_amount)
+        elif bet_type == BetType.DOZEN:
+            dozens = [Dozen.FIRST, Dozen.SECOND, Dozen.THIRD]
+            dozen = dozens[len(game_history) % 3]
+            return Bet(bet_type, dozen, new_bet_amount)
+        elif bet_type == BetType.HALF:
+            half = Half.FIRST_18 if len(game_history) % 2 == 0 else Half.LAST_18
+            return Bet(bet_type, half, new_bet_amount)
 
     def update_result(self, won: bool) -> None:
-        """Updates strategy with result of last bet.
-
-        Parameters:
-            won (bool): True if last bet won, else False
-        """
         super().update_result(won)
         if won:
             self.consecutive_losses = 0
         else:
             self.consecutive_losses += 1
 
-    @property
-    def previous_bet_amount(self) -> int:
+    def get_previous_bet_amount(self) -> int:
         return self.last_bet_amount
