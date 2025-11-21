@@ -6,7 +6,7 @@ from typing import Any, Iterator
 class ParallelHashTable(MutableMapping):
     """
     A parallel hash table implementation based on original HashTable from task 5.
-    Uses multiprocessing.Manager for shared state and fine-grained locking.
+    Uses separate chaining with fine-grained locking.
     """
 
     def __init__(self, volume: int = 8) -> None:
@@ -19,8 +19,10 @@ class ParallelHashTable(MutableMapping):
         self.volume = volume
         self.manager = Manager()
 
-        self._data = self.manager.dict()
-        self._lock = self.manager.Lock()
+        self.buckets = self.manager.list([self.manager.list() for _ in range(volume)])
+        self.size = self.manager.Value("i", 0)
+
+        self.locks = [self.manager.Lock() for _ in range(volume)]
 
     def _hash(self, key: Any) -> int:
         """
@@ -36,18 +38,30 @@ class ParallelHashTable(MutableMapping):
 
     def __setitem__(self, key: Any, value: Any) -> None:
         """
-        Set a key-value pair with thread-safe protection.
+        Set a key-value pair in the hash table.
 
         Args:
             key: Key to set
             value: Value to associate with the key
         """
-        with self._lock:
-            self._data[key] = value
+        index = self._hash(key)
+
+        with self.locks[index]:
+            bucket = self.buckets[index]
+
+            # Оригинальная логика из твоей хэш-таблицы
+            for i in range(len(bucket)):
+                k, v = bucket[i]
+                if k == key:
+                    bucket[i] = (key, value)
+                    return
+
+            bucket.append((key, value))
+            self.size.value += 1
 
     def __getitem__(self, key: Any) -> Any:
         """
-        Get the value associated with a key with thread-safe protection.
+        Get the value associated with a key.
 
         Args:
             key: Key to look up
@@ -58,12 +72,21 @@ class ParallelHashTable(MutableMapping):
         Raises:
             KeyError: If key is not found
         """
-        with self._lock:
-            return self._data[key]
+        index = self._hash(key)
+
+        with self.locks[index]:
+            bucket = self.buckets[index]
+
+            for item in bucket:
+                k, v = item
+                if k == key:
+                    return v
+
+        raise KeyError("Key not found: {0}".format(key))
 
     def __delitem__(self, key: Any) -> None:
         """
-        Remove a key-value pair with thread-safe protection.
+        Remove a key-value pair from the hash table.
 
         Args:
             key: Key to remove
@@ -71,8 +94,19 @@ class ParallelHashTable(MutableMapping):
         Raises:
             KeyError: If key is not found
         """
-        with self._lock:
-            del self._data[key]
+        index = self._hash(key)
+
+        with self.locks[index]:
+            bucket = self.buckets[index]
+
+            for i in range(len(bucket)):
+                k, v = bucket[i]
+                if k == key:
+                    del bucket[i]
+                    self.size.value -= 1
+                    return
+
+        raise KeyError("Key not found: {0}".format(key))
 
     def __contains__(self, key: Any) -> bool:
         """
@@ -84,20 +118,35 @@ class ParallelHashTable(MutableMapping):
         Returns:
             bool: True if key exists, False otherwise
         """
-        with self._lock:
-            return key in self._data
+        index = self._hash(key)
+
+        with self.locks[index]:
+            bucket = self.buckets[index]
+
+            for item in bucket:
+                k, v = item
+                if k == key:
+                    return True
+            return False
 
     def __iter__(self) -> Iterator[Any]:
         """
-        Iterate over all keys in the hash table with thread-safe protection.
+        Iterate over all keys in the hash table.
 
         Yields:
             Any: Next key in the hash table
         """
-        with self._lock:
-            keys = list(self._data.keys())
-        for key in keys:
-            yield key
+        for lock in self.locks:
+            lock.acquire()
+
+        try:
+            for bucket in self.buckets:
+                for item in bucket:
+                    k, v = item
+                    yield k
+        finally:
+            for lock in self.locks:
+                lock.release()
 
     def __len__(self) -> int:
         """
@@ -106,20 +155,13 @@ class ParallelHashTable(MutableMapping):
         Returns:
             int: Number of elements
         """
-        with self._lock:
-            return len(self._data)
+        return self.size.value
 
     def clear(self) -> None:
         """
         Clear all key-value pairs from the hash table.
         """
-        with self._lock:
-            self._data.clear()
-
-    def atomic_increment(self, key: Any, increment: int = 1) -> int:
-        """Atomically increment a counter value"""
-        with self._lock:
-            current = self._data.get(key, 0)
-            new_value = current + increment
-            self._data[key] = new_value
-            return new_value
+        for i in range(self.volume):
+            with self.locks[i]:
+                self.buckets[i][:] = []
+        self.size.value = 0
