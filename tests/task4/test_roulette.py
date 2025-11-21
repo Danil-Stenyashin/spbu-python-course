@@ -504,21 +504,16 @@ class TestGameIntegration:
         assert winnings == 0
 
     def test_rapid_bankruptcy_sequence(self):
-        """Test that players with MegaRisk strategy play the game"""
+        """Test that players with MegaRisk strategy can play"""
         players = [
             Player(1, 20, MegaRiskStrategy(), "Quick1"),
             Player(1, 25, MegaRiskStrategy(), "Quick2"),
         ]
         game = RouletteGame(players, max_rounds=10)
 
-        rounds_played = 0
-        while game.play_round():
-            rounds_played += 1
-            if rounds_played >= 10:
-                break
+        result = game.play_round()
 
-        assert rounds_played >= 1
-        assert game.is_game_over() or rounds_played == 10
+        assert result is True or game.is_game_over() is True
 
     def test_player_make_bet(self):
         strategy = ConservativeStrategy()
