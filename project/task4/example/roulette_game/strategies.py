@@ -59,6 +59,8 @@ class ConservativeStrategy(Strategy):
             half = Half.FIRST_18 if len(game_history) % 2 == 0 else Half.LAST_18
             return Bet(bet_type, half, amount)
 
+        return Bet(BetType.COLOR, Color.RED, amount)
+
 
 class RiskStrategy(Strategy):
     """Risky strategy - uses all bet types including numbers"""
@@ -95,6 +97,8 @@ class RiskStrategy(Strategy):
         elif bet_type == BetType.HALF:
             return Bet(bet_type, choice([Half.FIRST_18, Half.LAST_18]), amount)
 
+        return Bet(BetType.NUMBER, randint(0, 36), amount)
+
 
 class MegaRiskStrategy(Strategy):
     """Very risky strategy - focuses on high-risk high-reward bets"""
@@ -116,6 +120,8 @@ class MegaRiskStrategy(Strategy):
             return Bet(bet_type, number, amount)
         elif bet_type == BetType.COLUMN:
             return Bet(bet_type, randint(1, 3), amount)
+
+        return Bet(BetType.NUMBER, 0, amount)
 
 
 class MathematicalStrategy(Strategy):
@@ -157,6 +163,8 @@ class MathematicalStrategy(Strategy):
         elif bet_type == BetType.HALF:
             half = Half.FIRST_18 if len(game_history) % 2 == 0 else Half.LAST_18
             return Bet(bet_type, half, new_bet_amount)
+
+        return Bet(BetType.COLOR, Color.RED, new_bet_amount)
 
     def update_result(self, won: bool) -> None:
         super().update_result(won)
