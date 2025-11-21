@@ -1,0 +1,201 @@
+=-=-= DEMO GAME 1=-=-=
+
+Players:
+  Kolya_228_pro_gamer (balance: 100)
+  Mellstroy (balance: 100)
+  Ivan_Zolo (balance: 100)
+  Drakula (balance: 100)
+
+=-=-= START =-=-=
+
+
+=-=-=-=-=Round 1=-=-=-=-=
+Kolya_228_pro_gamer puts 10 on color red
+Came up: 21 (red)
+Mellstroy puts 10 on half 1-18
+Came up: 29 (black)
+Ivan_Zolo puts 50 on column 1
+Came up: 3 (red)
+Drakula puts 1 on color red
+Came up: 12 (red)
+Kolya_228_pro_gamer won 20!
+Mellstroy won 20!
+Drakula won 2!
+
+--- Game State after Round 1 ---
+  Kolya_228_pro_gamer: balance: 110
+  Mellstroy: balance: 110
+  Ivan_Zolo: balance: 50
+  Drakula: balance: 101
+
+=-=-=-=-=Round 2=-=-=-=-=
+Kolya_228_pro_gamer puts 11 on even_odd odd
+Came up: 17 (black)
+Mellstroy puts 11 on column 3
+Came up: 9 (red)
+Ivan_Zolo puts 25 on column 2
+Came up: 27 (red)
+Drakula puts 1 on even_odd odd
+Came up: 33 (black)
+Kolya_228_pro_gamer won 22!
+Mellstroy won 33!
+Drakula won 2!
+
+--- Game State after Round 2 ---
+  Kolya_228_pro_gamer: balance: 121
+  Mellstroy: balance: 132
+  Ivan_Zolo: balance: 25
+  Drakula: balance: 102
+
+=-=-=-=-=Round 3=-=-=-=-=
+Kolya_228_pro_gamer puts 12 on dozen 3rd
+Came up: 28 (black)
+Mellstroy puts 13 on column 1
+Came up: 28 (black)
+Ivan_Zolo puts 12 on number 34
+Came up: 26 (black)
+Drakula puts 1 on dozen 3rd
+Came up: 5 (red)
+
+--- Game State after Round 3 ---
+  Kolya_228_pro_gamer: balance: 109
+  Mellstroy: balance: 119
+  Ivan_Zolo: balance: 13
+  Drakula: balance: 101
+
+=-=-=-=-=Round 4=-=-=-=-=
+Kolya_228_pro_gamer puts 10 on half 19-36
+Came up: 7 (red)
+Mellstroy puts 11 on color black
+Came up: 29 (black)
+Ivan_Zolo puts 6 on number 7
+Came up: 32 (red)
+Drakula puts 2 on half 19-36
+Came up: 33 (black)
+Kolya_228_pro_gamer won 20!
+Mellstroy won 22!
+Drakula won 4!
+
+--- Game State after Round 4 ---
+  Kolya_228_pro_gamer: balance: 119
+  Mellstroy: balance: 130
+  Ivan_Zolo: balance: 7
+  Drakula: balance: 103
+
+=-=-=-=-=Round 5=-=-=-=-=
+Kolya_228_pro_gamer puts 11 on color red
+Came up: 9 (red)
+Mellstroy puts 13 on column 1
+Came up: 12 (red)
+Ivan_Zolo puts 3 on column 3
+Came up: 30 (red)
+Drakula puts 1 on color red
+Came up: 18 (red)
+Kolya_228_pro_gamer won 22!
+Ivan_Zolo won 9!
+Drakula won 2!
+
+--- Game State after Round 5 ---
+  Kolya_228_pro_gamer: balance: 130
+  Mellstroy: balance: 117
+  Ivan_Zolo: balance: 13
+  Drakula: balance: 104
+
+=-=-=-=-=Round 6=-=-=-=-=
+Kolya_228_pro_gamer puts 13 on even_odd odd
+Came up: 13 (black)
+Mellstroy puts 11 on half 19-36
+Came up: 36 (red)
+Ivan_Zolo puts 6 on column 1
+Came up: 7 (red)
+Drakula puts 1 on even_odd odd
+Came up: 30 (red)
+Mellstroy won 22!
+
+--- Game State after Round 6 ---
+  Kolya_228_pro_gamer: balance: 117
+  Mellstroy: balance: 128
+  Ivan_Zolo: balance: 7
+  Drakula: balance: 103
+
+=-=-=-=-=Round 7=-=-=-=-=
+Kolya_228_pro_gamer puts 11 on dozen 1st
+Came up: 25 (red)
+Mellstroy puts 12 on dozen 2nd
+Came up: 12 (red)
+Ivan_Zolo puts 3 on number 25
+Came up: 15 (black)
+Drakula puts 2 on dozen 1st
+Came up: 22 (black)
+Mellstroy won 36!
+
+--- Game State after Round 7 ---
+  Kolya_228_pro_gamer: balance: 106
+  Mellstroy: balance: 152
+  Ivan_Zolo: balance: 4
+  Drakula: balance: 101
+
+=-=-=-=-=Round 8=-=-=-=-=
+Kolya_228_pro_gamer puts 10 on half 19-36
+Came up: 35 (black)
+Mellstroy puts 15 on column 3
+Came up: 8 (black)
+Ivan_Zolo puts 2 on number 4
+Came up: 10 (black)
+Drakula puts 4 on half 19-36
+Came up: 34 (red)
+Kolya_228_pro_gamer won 20!
+Drakula won 8!
+
+--- Game State after Round 8 ---
+  Kolya_228_pro_gamer: balance: 116
+  Mellstroy: balance: 137
+  Ivan_Zolo: balance: 2
+  Drakula: balance: 105
+
+=-=-=-=-=Round 9=-=-=-=-=
+Kolya_228_pro_gamer puts 11 on color red
+Came up: 21 (red)
+Mellstroy puts 13 on column 3
+Came up: 2 (black)
+Ivan_Zolo puts 1 on column 1
+Came up: 14 (red)
+Drakula puts 1 on color red
+Came up: 27 (red)
+Kolya_228_pro_gamer won 22!
+Mellstroy won 39!
+Drakula won 2!
+
+--- Game State after Round 9 ---
+  Kolya_228_pro_gamer: balance: 127
+  Mellstroy: balance: 163
+  Ivan_Zolo: balance: 1
+  Drakula: balance: 106
+
+=-=-=-=-=Round 10=-=-=-=-=
+Kolya_228_pro_gamer puts 12 on even_odd odd
+Came up: 2 (black)
+Mellstroy puts 16 on half 19-36
+Came up: 10 (black)
+Ivan_Zolo puts 1 on column 2
+Came up: 13 (black)
+Drakula puts 1 on even_odd odd
+Came up: 27 (red)
+Kolya_228_pro_gamer won 24!
+Mellstroy won 32!
+Drakula won 2!
+
+--- Game State after Round 10 ---
+  Kolya_228_pro_gamer: balance: 139
+  Mellstroy: balance: 179
+  Ivan_Zolo: BANKRUPT
+  Drakula: balance: 107
+
+=-=-= Game over after 10 rounds =-=-=
+Final balance:
+  Kolya_228_pro_gamer: 139 (In game)
+  Mellstroy: 179 (In game)
+  Ivan_Zolo: 0 (Dropped out)
+  Drakula: 107 (In game)
+
+ Winner: Mellstroy with balance 179!

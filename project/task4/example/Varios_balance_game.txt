@@ -1,0 +1,158 @@
+=-=-= DEMO GAME 1=-=-=
+
+Players:
+  Kolya_228_pro_gamer (balance: 83355133)
+  Mellstroy (balance: 48997644)
+  Drakula (balance: 28978145)
+
+=-=-= START =-=-=
+
+
+=-=-=-=-=Round 1=-=-=-=-=
+Kolya_228_pro_gamer puts 8335513 on color red
+Came up: 32 (red)
+Mellstroy puts 4899764 on color black
+Came up: 9 (red)
+Drakula puts 1 on color red
+Came up: 21 (red)
+Kolya_228_pro_gamer won 16671026!
+Drakula won 2!
+
+--- Game State after Round 1 ---
+  Kolya_228_pro_gamer: balance: 91690646
+  Mellstroy: balance: 44097880
+  Drakula: balance: 28978146
+
+=-=-=-=-=Round 2=-=-=-=-=
+Kolya_228_pro_gamer puts 9169064 on even_odd odd
+Came up: 11 (black)
+Mellstroy puts 4409788 on even_odd odd
+Came up: 15 (black)
+Drakula puts 1 on even_odd odd
+Came up: 8 (black)
+
+--- Game State after Round 2 ---
+  Kolya_228_pro_gamer: balance: 82521582
+  Mellstroy: balance: 39688092
+  Drakula: balance: 28978145
+
+=-=-=-=-=Round 3=-=-=-=-=
+Kolya_228_pro_gamer puts 8252158 on dozen 3rd
+Came up: 12 (red)
+Mellstroy puts 3968809 on column 1
+Came up: 16 (red)
+Drakula puts 2 on dozen 3rd
+Came up: 32 (red)
+Kolya_228_pro_gamer won 24756474!
+Drakula won 6!
+
+--- Game State after Round 3 ---
+  Kolya_228_pro_gamer: balance: 99025898
+  Mellstroy: balance: 35719283
+  Drakula: balance: 28978149
+
+=-=-=-=-=Round 4=-=-=-=-=
+Kolya_228_pro_gamer puts 9902589 on half 19-36
+Came up: 15 (black)
+Mellstroy puts 3571928 on half 1-18
+Came up: 15 (black)
+Drakula puts 1 on half 19-36
+Came up: 36 (red)
+Kolya_228_pro_gamer won 19805178!
+Drakula won 2!
+
+--- Game State after Round 4 ---
+  Kolya_228_pro_gamer: balance: 108928487
+  Mellstroy: balance: 32147355
+  Drakula: balance: 28978150
+
+=-=-=-=-=Round 5=-=-=-=-=
+Kolya_228_pro_gamer puts 10892848 on color red
+Came up: 5 (red)
+Mellstroy puts 3214735 on dozen 2nd
+Came up: 13 (black)
+Drakula puts 1 on color red
+Came up: 10 (black)
+
+--- Game State after Round 5 ---
+  Kolya_228_pro_gamer: balance: 98035639
+  Mellstroy: balance: 28932620
+  Drakula: balance: 28978149
+
+=-=-=-=-=Round 6=-=-=-=-=
+Kolya_228_pro_gamer puts 9803563 on even_odd odd
+Came up: 8 (black)
+Mellstroy puts 2893262 on even_odd even
+Came up: 11 (black)
+Drakula puts 2 on even_odd odd
+Came up: 19 (red)
+Kolya_228_pro_gamer won 19607126!
+Drakula won 4!
+
+--- Game State after Round 6 ---
+  Kolya_228_pro_gamer: balance: 107839202
+  Mellstroy: balance: 26039358
+  Drakula: balance: 28978151
+
+=-=-=-=-=Round 7=-=-=-=-=
+Kolya_228_pro_gamer puts 10783920 on dozen 1st
+Came up: 27 (red)
+Mellstroy puts 2603935 on color black
+Came up: 33 (black)
+Drakula puts 1 on dozen 1st
+Came up: 1 (red)
+Kolya_228_pro_gamer won 32351760!
+Drakula won 3!
+
+--- Game State after Round 7 ---
+  Kolya_228_pro_gamer: balance: 129407042
+  Mellstroy: balance: 23435423
+  Drakula: balance: 28978153
+
+=-=-=-=-=Round 8=-=-=-=-=
+Kolya_228_pro_gamer puts 12940704 on half 19-36
+Came up: 35 (black)
+Mellstroy puts 2343542 on half 19-36
+Came up: 28 (black)
+Drakula puts 1 on half 19-36
+Came up: 5 (red)
+
+--- Game State after Round 8 ---
+  Kolya_228_pro_gamer: balance: 116466338
+  Mellstroy: balance: 21091881
+  Drakula: balance: 28978152
+
+=-=-=-=-=Round 9=-=-=-=-=
+Kolya_228_pro_gamer puts 11646633 on color red
+Came up: 25 (red)
+Mellstroy puts 2109188 on column 1
+Came up: 10 (black)
+Drakula puts 2 on color red
+Came up: 33 (black)
+
+--- Game State after Round 9 ---
+  Kolya_228_pro_gamer: balance: 104819705
+  Mellstroy: balance: 18982693
+  Drakula: balance: 28978150
+
+=-=-=-=-=Round 10=-=-=-=-=
+Kolya_228_pro_gamer puts 10481970 on even_odd odd
+Came up: 31 (black)
+Mellstroy puts 1898269 on even_odd even
+Came up: 9 (red)
+Drakula puts 4 on even_odd odd
+Came up: 8 (black)
+Mellstroy won 3796538!
+
+--- Game State after Round 10 ---
+  Kolya_228_pro_gamer: balance: 94337735
+  Mellstroy: balance: 20880962
+  Drakula: balance: 28978146
+
+=-=-= Game over after 10 rounds =-=-=
+Final balance:
+  Kolya_228_pro_gamer: 94337735 (In game)
+  Mellstroy: 20880962 (In game)
+  Drakula: 28978146 (In game)
+
+ Winner: Kolya_228_pro_gamer with balance 94337735!
